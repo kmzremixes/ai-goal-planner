@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -66,36 +66,42 @@ const AIPromptGeneratorModal = ({ isOpen, setIsOpen }: AIPromptGeneratorModalPro
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="cyber-card neon-border w-full max-w-2xl p-8 bg-black/90 border-none no-print">
-        <div className="space-y-4">
-            <h2 className="cyber-title text-2xl">AI PROMPT GENERATOR</h2>
-            <div>
-                <label htmlFor="ai-idea-input" className="block mb-3 font-bold text-cyan-300">1. ใส่ไอเดียของคุณ (ไทย/อังกฤษ):</label>
-                <Input id="ai-idea-input" value={idea} onChange={(e) => setIdea(e.target.value)} className="cyber-input" placeholder="เช่น แมวในชุดอวกาศบนดาวอังคาร" />
+        <DialogHeader>
+          <DialogTitle asChild>
+              <h2 className="cyber-title text-2xl">AI PROMPT GENERATOR</h2>
+          </DialogTitle>
+          <DialogDescription asChild>
+            <div className="space-y-4">
+                <div>
+                    <label htmlFor="ai-idea-input" className="block mb-3 font-bold text-cyan-300">1. ใส่ไอเดียของคุณ (ไทย/อังกฤษ):</label>
+                    <Input id="ai-idea-input" value={idea} onChange={(e) => setIdea(e.target.value)} className="cyber-input" placeholder="เช่น แมวในชุดอวกาศบนดาวอังคาร" />
+                </div>
+                <div>
+                    <label htmlFor="ai-model-select" className="block mb-3 font-bold text-cyan-300">2. เลือกโมเดลเป้าหมาย:</label>
+                    <Select onValueChange={setModel} defaultValue={model}>
+                        <SelectTrigger className="cyber-input">
+                            <SelectValue placeholder="เลือกโมเดล" />
+                        </SelectTrigger>
+                        <SelectContent className="cyber-card">
+                            {models.map(m => <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <Button onClick={handleGeneratePrompt} disabled={isLoading} className="w-full cyber-btn flex justify-center items-center gap-2">
+                    {isLoading ? <div className="spinner"></div> : <Sparkles className="h-5 w-5" />}
+                    <span>สร้าง Prompt</span>
+                </Button>
+                <div>
+                    <label htmlFor="ai-generated-prompt" className="block mb-3 font-bold text-cyan-300">3. Prompt ที่สร้างเสร็จ (ภาษาอังกฤษ):</label>
+                    <Textarea id="ai-generated-prompt" value={generatedPrompt} readOnly className="cyber-input w-full h-40 resize-none font-code" placeholder="AI จะสร้าง prompt ที่นี่..." />
+                </div>
+                <div className="flex gap-4">
+                    <Button onClick={handleCopy} className="w-full cyber-btn"><Copy className="mr-2 h-4 w-4" />คัดลอก</Button>
+                    <Button onClick={() => setIsOpen(false)} variant="ghost" className="w-full px-6 py-3 bg-gray-600 text-white font-bold rounded-lg border-2 border-gray-500 hover:bg-gray-700 transition-all">ปิด</Button>
+                </div>
             </div>
-            <div>
-                <label htmlFor="ai-model-select" className="block mb-3 font-bold text-cyan-300">2. เลือกโมเดลเป้าหมาย:</label>
-                <Select onValueChange={setModel} defaultValue={model}>
-                    <SelectTrigger className="cyber-input">
-                        <SelectValue placeholder="เลือกโมเดล" />
-                    </SelectTrigger>
-                    <SelectContent className="cyber-card">
-                        {models.map(m => <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-            </div>
-            <Button onClick={handleGeneratePrompt} disabled={isLoading} className="w-full cyber-btn flex justify-center items-center gap-2">
-                {isLoading ? <div className="spinner"></div> : <Sparkles className="h-5 w-5" />}
-                <span>สร้าง Prompt</span>
-            </Button>
-            <div>
-                <label htmlFor="ai-generated-prompt" className="block mb-3 font-bold text-cyan-300">3. Prompt ที่สร้างเสร็จ (ภาษาอังกฤษ):</label>
-                <Textarea id="ai-generated-prompt" value={generatedPrompt} readOnly className="cyber-input w-full h-40 resize-none font-code" placeholder="AI จะสร้าง prompt ที่นี่..." />
-            </div>
-            <div className="flex gap-4">
-                <Button onClick={handleCopy} className="w-full cyber-btn"><Copy className="mr-2 h-4 w-4" />คัดลอก</Button>
-                <Button onClick={() => setIsOpen(false)} variant="ghost" className="w-full px-6 py-3 bg-gray-600 text-white font-bold rounded-lg border-2 border-gray-500 hover:bg-gray-700 transition-all">ปิด</Button>
-            </div>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
       </DialogContent>
     </Dialog>
   );

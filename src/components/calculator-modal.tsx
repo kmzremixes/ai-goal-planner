@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 
 interface CalculatorModalProps {
   isOpen: boolean;
@@ -82,23 +82,30 @@ const CalculatorModal = ({ isOpen, setIsOpen }: CalculatorModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="cyber-card neon-border w-full max-w-xs p-4 bg-black/90 border-none no-print">
-        <div className="w-full h-20 bg-black/50 border border-cyan-400 rounded-lg mb-4 flex items-center justify-end p-4 text-4xl text-white font-mono" style={{ textShadow: '0 0 5px #fff' }}>
-          {formattedDisplay}
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          {buttonLayout.map((b) => (
-            <button
-              key={b.text}
-              onClick={() => handleButtonClick(b.type, b.value || b.text)}
-              className={`bg-black/40 rounded-lg text-2xl font-bold hover:bg-pink-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 py-4 ${b.class}`}
-            >
-              {b.text}
-            </button>
-          ))}
-        </div>
-        <Button onClick={() => setIsOpen(false)} className="w-full mt-4 cyber-btn">
-          CLOSE
-        </Button>
+        <DialogHeader>
+          <DialogTitle className="sr-only">Calculator</DialogTitle>
+          <DialogDescription asChild>
+            <div>
+              <div className="w-full h-20 bg-black/50 border border-cyan-400 rounded-lg mb-4 flex items-center justify-end p-4 text-4xl text-white font-mono" style={{ textShadow: '0 0 5px #fff' }}>
+                {formattedDisplay}
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {buttonLayout.map((b) => (
+                  <button
+                    key={b.text}
+                    onClick={() => handleButtonClick(b.type, b.value || b.text)}
+                    className={`bg-black/40 rounded-lg text-2xl font-bold hover:bg-pink-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 py-4 ${b.class}`}
+                  >
+                    {b.text}
+                  </button>
+                ))}
+              </div>
+              <Button onClick={() => setIsOpen(false)} className="w-full mt-4 cyber-btn">
+                CLOSE
+              </Button>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
       </DialogContent>
     </Dialog>
   );
