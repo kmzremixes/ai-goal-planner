@@ -65,7 +65,7 @@ const NotebookView = ({ selectedDate, initialData, onSave }: NotebookViewProps) 
 
   return (
     <div id="notebook-view">
-        <div id="notebook-container" className="cyber-card neon-border p-8 mb-8">
+        <div id="notebook-container" className="cyber-card">
             <h2 className="text-3xl font-bold cyber-title mb-6">สมุดบันทึก</h2>
             <Textarea
                 value={notebookText}

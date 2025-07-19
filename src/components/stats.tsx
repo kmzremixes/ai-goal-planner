@@ -24,7 +24,7 @@ const Stats = ({ allRecords, selectedDate }: StatsProps) => {
   }, [allRecords, selectedDate]);
 
   return (
-    <div className="cyber-card neon-border p-6">
+    <div className="cyber-card">
         <h3 className="cyber-title text-xl mb-4">สถิติรวม (เดือนปัจจุบัน)</h3>
         <div className="space-y-2 text-cyan-300">
             <div className="flex justify-between">

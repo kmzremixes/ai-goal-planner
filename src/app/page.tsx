@@ -12,7 +12,6 @@ import NotebookView from '@/components/notebook-view';
 import WeatherForecast from '@/components/weather-forecast';
 import AIGoalPlanner from '@/components/ai-goal-planner';
 import ContentCreator from '@/components/content-creator';
-import QuickActions from '@/components/quick-actions';
 import Stats from '@/components/stats';
 import AppFooter from '@/components/app-footer';
 import CalculatorModal from '@/components/calculator-modal';
@@ -67,7 +66,7 @@ export default function Home() {
       <MatrixBackground />
       <main id="main-content" className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <AppHeader 
-          userId={userId}
+          allRecords={allRecords}
           onOpenCalculator={() => setCalculatorOpen(true)}
           onOpenAiPrompt={() => setAiPromptOpen(true)}
         />
@@ -96,11 +95,11 @@ export default function Home() {
         <AIGoalPlanner />
 
         <ContentCreator />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 no-print">
-          <QuickActions allRecords={allRecords} />
+        
+        <div className="grid grid-cols-1 gap-8 mb-8 no-print">
           <Stats allRecords={allRecords} selectedDate={selectedDate} />
         </div>
+
 
         <AppFooter />
       </main>

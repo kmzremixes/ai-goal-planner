@@ -42,7 +42,7 @@ const AIGoalPlanner = () => {
     };
 
     return (
-        <div className="cyber-card neon-border p-8 mb-8 no-print">
+        <div className="cyber-card no-print">
             <h3 className="cyber-title text-2xl mb-6">AI GOAL PLANNER</h3>
             <div className="space-y-4">
                 <div>

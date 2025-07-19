@@ -5,6 +5,7 @@ import type { DailyData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Edit, Save, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface IncomeViewProps {
   selectedDate: string;
@@ -50,7 +51,7 @@ const IncomeView = ({ selectedDate, setSelectedDate, initialData, onSave }: Inco
 
   return (
     <div id="income-view">
-        <div className="cyber-card neon-border p-6 md:p-8 mb-8 printable-area">
+        <div className="cyber-card printable-area">
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
                 <div>
                     <h2 className="text-3xl font-bold cyber-title">รายรับประจำวัน</h2>
@@ -71,7 +72,7 @@ const IncomeView = ({ selectedDate, setSelectedDate, initialData, onSave }: Inco
                         <Button onClick={handleCancelClick} variant="ghost" size="icon"><X className="text-red-500"/></Button>
                       </div>
                     ) : (
-                      <Button onClick={() => setIsEditing(true)} className="cyber-btn"><Edit className="mr-2 h-4 w-4" /> EDIT</Button>
+                      <Button onClick={() => setIsEditing(true)} className={cn('cyber-btn red')}><Edit className="mr-2 h-4 w-4" /> EDIT</Button>
                     )}
                 </div>
             </div>
