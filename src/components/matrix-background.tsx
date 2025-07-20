@@ -12,7 +12,7 @@ const MatrixBackground = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId: number;
+    let intervalId: NodeJS.Timeout;
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -45,22 +45,21 @@ const MatrixBackground = () => {
         }
         drops[i]++;
       }
-      animationFrameId = requestAnimationFrame(draw);
     };
 
-    draw();
+    intervalId = setInterval(draw, 50); // Update every 50ms (20 FPS)
 
     const handleResize = () => {
-      cancelAnimationFrame(animationFrameId);
+      clearInterval(intervalId);
       resizeCanvas();
       for (let x = 0; x < columns; x++) drops[x] = 1;
-      draw();
+      intervalId = setInterval(draw, 50);
     };
 
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
+      clearInterval(intervalId);
     };
   }, []);
 

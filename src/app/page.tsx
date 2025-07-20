@@ -71,6 +71,8 @@ export default function Home() {
           onOpenAiPrompt={() => setAiPromptOpen(true)}
         />
         
+        <WeatherForecast />
+        
         <ViewSwitcher currentView={currentView} setCurrentView={setCurrentView} />
 
         {currentView === 'income' && (
@@ -90,8 +92,6 @@ export default function Home() {
           />
         )}
 
-        <WeatherForecast />
-        
         <AIGoalPlanner />
 
         <ContentCreator />
