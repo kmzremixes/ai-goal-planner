@@ -26,15 +26,21 @@ const AppHeader = ({ onOpenCalculator, onOpenAiPrompt, allRecords }: AppHeaderPr
         });
         return;
     }
-    let csvContent = "data:text/csv;charset=utf-8,Date,ID Photos (Count),Photo Editing (THB),Design Work (THB),Other Income (THB),Total Income (THB),Notebook\n";
+    let csvContent = "data:text/csv;charset=utf-8,Date,Type,Description,Amount,Notebook\n";
     const sortedDates = Object.keys(allRecords).sort();
     
     sortedDates.forEach(date => {
         const data = allRecords[date];
-        const total = (data.idPhotos || 0) * 30 + (data.photoEditing || 0) + (data.designWork || 0) + (data.otherIncome || 0);
         const notebookText = `"${(data.notebook || '').replace(/"/g, '""')}"`;
-        const row = [date, data.idPhotos || 0, data.photoEditing || 0, data.designWork || 0, data.otherIncome || 0, total, notebookText].join(",");
-        csvContent += row + "\r\n";
+        if (data.transactions.length > 0) {
+          data.transactions.forEach(tx => {
+            const row = [date, tx.type, `"${tx.description.replace(/"/g, '""')}"`, tx.amount, notebookText].join(",");
+            csvContent += row + "\r\n";
+          });
+        } else {
+           const row = [date, '', '', '', notebookText].join(",");
+           csvContent += row + "\r\n";
+        }
     });
     
     const encodedUri = encodeURI(csvContent);

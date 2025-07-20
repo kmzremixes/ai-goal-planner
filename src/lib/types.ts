@@ -1,8 +1,12 @@
+export interface Transaction {
+  id: string;
+  type: 'income' | 'expense';
+  description: string;
+  amount: number;
+}
+
 export interface DailyData {
-  idPhotos: number;
-  photoEditing: number;
-  designWork: number;
-  otherIncome: number;
+  transactions: Transaction[];
   notebook: string;
 }
 

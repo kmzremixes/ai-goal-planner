@@ -14,8 +14,9 @@ const Stats = ({ allRecords, selectedDate }: StatsProps) => {
     const monthlyRecords = Object.entries(allRecords).filter(([date]) => date.startsWith(currentMonth));
     
     const total = monthlyRecords.reduce((acc, [_, data]) => {
-        const dayTotal = (data.idPhotos || 0) * 30 + (data.photoEditing || 0) + (data.designWork || 0) + (data.otherIncome || 0);
-        return acc + dayTotal;
+        const dayIncome = data.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+        const dayExpense = data.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+        return acc + (dayIncome - dayExpense);
     }, 0);
     
     const average = monthlyRecords.length > 0 ? total / monthlyRecords.length : 0;
@@ -28,7 +29,7 @@ const Stats = ({ allRecords, selectedDate }: StatsProps) => {
         <h3 className="cyber-title text-xl mb-4">สถิติรวม (เดือนปัจจุบัน)</h3>
         <div className="space-y-2 text-cyan-300">
             <div className="flex justify-between">
-                <span>รายรับเดือนนี้:</span>
+                <span>รายรับ-รายจ่ายเดือนนี้ (สุทธิ):</span>
                 <span className="text-green-400 font-bold">{monthlyTotal.toLocaleString()} บาท</span>
             </div>
             <div className="flex justify-between">

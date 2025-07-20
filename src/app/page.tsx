@@ -18,7 +18,7 @@ import CalculatorModal from '@/components/calculator-modal';
 import AIPromptGeneratorModal from '@/components/ai-prompt-generator-modal';
 import { useToast } from "@/hooks/use-toast";
 
-const defaultData: DailyData = { idPhotos: 0, photoEditing: 0, designWork: 0, otherIncome: 0, notebook: '' };
+const defaultData: DailyData = { transactions: [], notebook: '' };
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
