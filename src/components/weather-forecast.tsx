@@ -11,9 +11,13 @@ interface WeatherData {
 
 const WeatherForecast = () => {
   const [forecast, setForecast] = useState<WeatherData[]>([]);
-  const [locationName, setLocationName] = useState('Loading location...');
+  const [locationName, setLocationName] = useState('Borabue, Maha Sarakham');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Coordinates for Borabue, Maha Sarakham
+  const BORABUE_LAT = 15.96;
+  const BORABUE_LON = 103.25;
 
   // WMO Weather interpretation codes
   const getWeatherIcon = (code: number, isDay: number): React.ReactNode => {
@@ -38,18 +42,14 @@ const WeatherForecast = () => {
     setIsLoading(true);
     setError(null);
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day&hourly=temperature_2m,weather_code&timezone=auto`;
-    const locationUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
 
-    Promise.all([fetch(weatherUrl), fetch(locationUrl)])
-      .then(async ([weatherRes, locationRes]) => {
-        if (!weatherRes.ok || !locationRes.ok) {
-          throw new Error('Failed to fetch data.');
+    fetch(weatherUrl)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch weather data.');
         }
-        const weatherData = await weatherRes.json();
-        const locationData = await locationRes.json();
+        const weatherData = await res.json();
         
-        setLocationName(`${locationData.city}, ${locationData.principalSubdivision}`);
-
         const now = new Date();
         const currentHour = now.getHours();
 
@@ -92,25 +92,13 @@ const WeatherForecast = () => {
   };
   
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser.");
-      setIsLoading(false);
-      return;
-    }
-
-    const getLocationAndFetch = () => {
-        navigator.geolocation.getCurrentPosition(
-            (position) => fetchWeather(position.coords.latitude, position.coords.longitude),
-            () => {
-                setError("Unable to retrieve your location. Please enable location services.");
-                setIsLoading(false);
-            }
-        );
-    }
+    const fetchAndSetInterval = () => {
+        fetchWeather(BORABUE_LAT, BORABUE_LON);
+    };
     
-    getLocationAndFetch(); // Initial fetch
+    fetchAndSetInterval(); // Initial fetch
     
-    const intervalId = setInterval(getLocationAndFetch, 30 * 60 * 1000); // Refresh every 30 minutes
+    const intervalId = setInterval(fetchAndSetInterval, 30 * 60 * 1000); // Refresh every 30 minutes
 
     return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);
