@@ -95,10 +95,12 @@
     @apply bg-gradient-to-r from-red-500 to-orange-500 text-white;
   }
   .cyber-btn:hover {
-    @apply -translate-y-1 shadow-[0_10px_20px_theme(colors.accent/0.4)];
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px hsl(var(--accent) / 0.4);
   }
   .cyber-btn.red:hover {
-    @apply shadow-[0_10px_20px_theme(colors.red-500/0.4)];
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);
   }
   .cyber-btn::before {
     content: '';
