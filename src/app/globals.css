@@ -129,7 +129,7 @@
       @apply bg-black/50 text-primary border-2 border-primary;
   }
   .view-btn.active {
-      @apply bg-gradient-to-r from-primary to-accent text-black shadow-[0_0_20px_theme(colors.primary/0.7)];
+      @apply bg-gradient-to-r from-primary to-accent text-black shadow-lg shadow-primary/70;
   }
 }
 
@@ -154,7 +154,7 @@
         height: 100%; 
         padding: 20px; 
         background: white !important; 
-        color: black !important;
+        color: black !important; 
     }
     .printable-area h2, .printable-area p, .printable-area label, .printable-area span, .printable-area div { 
         color: black !important; 
