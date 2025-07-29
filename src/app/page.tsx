@@ -8,7 +8,6 @@ import MatrixBackground from '@/components/matrix-background';
 import AppHeader from '@/components/app-header';
 import NotebookView from '@/components/notebook-view';
 import WeatherForecast from '@/components/weather-forecast';
-import AIGoalPlanner from '@/components/ai-goal-planner';
 import ContentCreator from '@/components/content-creator';
 import AppFooter from '@/components/app-footer';
 import CalculatorModal from '@/components/calculator-modal';
@@ -94,8 +93,6 @@ export default function Home() {
             />
         </div>
         
-        <AIGoalPlanner />
-
         <ContentCreator />
         
         <AppFooter />
