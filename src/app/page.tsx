@@ -9,6 +9,7 @@ import AppHeader from '@/components/app-header';
 import NotebookView from '@/components/notebook-view';
 import WeatherForecast from '@/components/weather-forecast';
 import ContentCreator from '@/components/content-creator';
+import ImageEditor from '@/components/image-editor';
 import AppFooter from '@/components/app-footer';
 import CalculatorModal from '@/components/calculator-modal';
 import AIPromptGeneratorModal from '@/components/ai-prompt-generator-modal';
@@ -94,6 +95,8 @@ export default function Home() {
         </div>
         
         <ContentCreator />
+
+        <ImageEditor />
         
         <AppFooter />
       </main>
