@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Calculator, Bot, Printer, FileText } from 'lucide-react';
+import { Calculator, Bot, Printer } from 'lucide-react';
 import type { AllRecords } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,33 +16,6 @@ const AppHeader = ({ onOpenCalculator, onOpenAiPrompt, allRecords }: AppHeaderPr
 
   const handlePrint = () => {
     window.print();
-  };
-
-  const handleExport = () => {
-    if (Object.keys(allRecords).length === 0) {
-        toast({
-            title: "⚠️ ไม่มีข้อมูลให้ Export",
-            variant: "destructive"
-        });
-        return;
-    }
-    let csvContent = "data:text/csv;charset=utf-8,Date,Notebook\n";
-    const sortedDates = Object.keys(allRecords).sort();
-    
-    sortedDates.forEach(date => {
-        const data = allRecords[date];
-        const notebookText = `"${(data.notebook || '').replace(/"/g, '""')}"`;
-        const row = [date, notebookText].join(",");
-        csvContent += row + "\r\n";
-    });
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `notebook_export.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   return (
@@ -63,9 +36,6 @@ const AppHeader = ({ onOpenCalculator, onOpenAiPrompt, allRecords }: AppHeaderPr
         </Button>
         <Button onClick={handlePrint} className="cyber-btn">
             <Printer className="mr-2 h-4 w-4" /> <span>PRINT</span>
-        </Button>
-        <Button onClick={handleExport} className="cyber-btn">
-            <FileText className="mr-2 h-4 w-4" /> <span>EXPORT</span>
         </Button>
       </div>
     </header>
