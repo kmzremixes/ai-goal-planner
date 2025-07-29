@@ -6,26 +6,23 @@ import type { DailyData, AllRecords } from '@/lib/types';
 import LoadingScreen from '@/components/loading-screen';
 import MatrixBackground from '@/components/matrix-background';
 import AppHeader from '@/components/app-header';
-import ViewSwitcher from '@/components/view-switcher';
-import IncomeView from '@/components/income-view';
 import NotebookView from '@/components/notebook-view';
 import WeatherForecast from '@/components/weather-forecast';
 import AIGoalPlanner from '@/components/ai-goal-planner';
 import ContentCreator from '@/components/content-creator';
-import Stats from '@/components/stats';
 import AppFooter from '@/components/app-footer';
 import CalculatorModal from '@/components/calculator-modal';
 import AIPromptGeneratorModal from '@/components/ai-prompt-generator-modal';
 import { useToast } from "@/hooks/use-toast";
+import { Input } from '@/components/ui/input';
 
-const defaultData: DailyData = { transactions: [], notebook: '' };
+const defaultData: DailyData = { notebook: '' };
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [isCalculatorOpen, setCalculatorOpen] = useState(false);
   const [isAiPromptOpen, setAiPromptOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'income' | 'notebook'>('income');
   
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [allRecords, setAllRecords] = useState<AllRecords>({});
@@ -72,35 +69,35 @@ export default function Home() {
         />
         
         <WeatherForecast />
-        
-        <ViewSwitcher currentView={currentView} setCurrentView={setCurrentView} />
 
-        {currentView === 'income' && (
-          <IncomeView 
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            initialData={currentData}
-            onSave={handleDataSave}
-          />
-        )}
-        
-        {currentView === 'notebook' && (
+        <div className="cyber-card printable-area mb-8">
+           <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+               <div>
+                    <h2 className="text-3xl font-bold cyber-title">สมุดบันทึกประจำวัน</h2>
+                    <p className="text-cyan-300 text-lg mt-2">
+                        {new Date(selectedDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+                    </p>
+                </div>
+                <div className="flex items-center gap-4 no-print">
+                    <Input 
+                        type="date" 
+                        value={selectedDate} 
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="cyber-input !w-auto"
+                    />
+                </div>
+           </div>
            <NotebookView 
-            selectedDate={selectedDate}
-            initialData={currentData}
-            onSave={handleDataSave}
-          />
-        )}
-
+                selectedDate={selectedDate}
+                initialData={currentData}
+                onSave={handleDataSave}
+            />
+        </div>
+        
         <AIGoalPlanner />
 
         <ContentCreator />
         
-        <div className="grid grid-cols-1 gap-8 mb-8 no-print">
-          <Stats allRecords={allRecords} selectedDate={selectedDate} />
-        </div>
-
-
         <AppFooter />
       </main>
       

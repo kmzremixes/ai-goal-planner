@@ -35,7 +35,7 @@ const NotebookView = ({ selectedDate, initialData, onSave }: NotebookViewProps) 
   }, [selectedDate, initialData]);
   
   const handleSave = () => {
-    onSave(selectedDate, { ...initialData, notebook: notebookText });
+    onSave(selectedDate, { notebook: notebookText });
   };
 
   const handleSummarize = async () => {
@@ -64,28 +64,25 @@ const NotebookView = ({ selectedDate, initialData, onSave }: NotebookViewProps) 
   };
 
   return (
-    <div id="notebook-view">
-        <div id="notebook-container" className="cyber-card">
-            <h2 className="text-3xl font-bold cyber-title mb-6">สมุดบันทึก</h2>
-            <Textarea
-                value={notebookText}
-                onChange={(e) => setNotebookText(e.target.value)}
-                className="cyber-input w-full h-64 resize-none mb-4"
-                placeholder={`พิมพ์บันทึกสำหรับวันที่ ${new Date(selectedDate).toLocaleDateString('th-TH')} ที่นี่...`}
-            />
-            <div className="flex flex-col sm:flex-row gap-4">
-                <Button onClick={handleSave} className="w-full cyber-btn">
-                    <Save className="mr-2 h-4 w-4" /> บันทึก
-                </Button>
-                <Button onClick={handleSummarize} disabled={isLoading} className="w-full cyber-btn flex justify-center items-center gap-2">
-                    {isLoading ? (
-                        <div className="spinner"></div>
-                    ) : (
-                        <Sparkles className="mr-2 h-4 w-4" />
-                    )}
-                    <span>สรุปด้วย AI</span>
-                </Button>
-            </div>
+    <div id="notebook-view" className="printable-area">
+        <Textarea
+            value={notebookText}
+            onChange={(e) => setNotebookText(e.target.value)}
+            className="cyber-input w-full h-64 resize-none mb-4"
+            placeholder={`พิมพ์บันทึกสำหรับวันที่ ${new Date(selectedDate).toLocaleDateString('th-TH')} ที่นี่...`}
+        />
+        <div className="flex flex-col sm:flex-row gap-4 no-print">
+            <Button onClick={handleSave} className="w-full cyber-btn">
+                <Save className="mr-2 h-4 w-4" /> บันทึก
+            </Button>
+            <Button onClick={handleSummarize} disabled={isLoading} className="w-full cyber-btn flex justify-center items-center gap-2">
+                {isLoading ? (
+                    <div className="spinner"></div>
+                ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                <span>สรุปด้วย AI</span>
+            </Button>
         </div>
         <AlertDialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
           <AlertDialogContent className="cyber-card neon-border">

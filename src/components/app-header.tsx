@@ -26,27 +26,20 @@ const AppHeader = ({ onOpenCalculator, onOpenAiPrompt, allRecords }: AppHeaderPr
         });
         return;
     }
-    let csvContent = "data:text/csv;charset=utf-8,Date,Type,Description,Amount,Notebook\n";
+    let csvContent = "data:text/csv;charset=utf-8,Date,Notebook\n";
     const sortedDates = Object.keys(allRecords).sort();
     
     sortedDates.forEach(date => {
         const data = allRecords[date];
         const notebookText = `"${(data.notebook || '').replace(/"/g, '""')}"`;
-        if (data.transactions.length > 0) {
-          data.transactions.forEach(tx => {
-            const row = [date, tx.type, `"${tx.description.replace(/"/g, '""')}"`, tx.amount, notebookText].join(",");
-            csvContent += row + "\r\n";
-          });
-        } else {
-           const row = [date, '', '', '', notebookText].join(",");
-           csvContent += row + "\r\n";
-        }
+        const row = [date, notebookText].join(",");
+        csvContent += row + "\r\n";
     });
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `daily_data_export.csv`);
+    link.setAttribute("download", `notebook_export.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
