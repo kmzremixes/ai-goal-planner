@@ -6,8 +6,15 @@ import type { StoredImage } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Download, Type, Image as ImageIcon } from 'lucide-react';
+import { Upload, Download, Type, Image as ImageIcon, Save, X } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 interface ImageEditorProps {
     savedImages: StoredImage[];
@@ -20,6 +27,9 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { toast } = useToast();
+
+    const [isViewerOpen, setViewerOpen] = useState(false);
+    const [selectedImageForViewer, setSelectedImageForViewer] = useState<string | null>(null);
 
     useEffect(() => {
         // Set the first saved image as the initial preview if available
@@ -35,36 +45,37 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
             reader.onload = (e) => {
                 const result = e.target?.result as string;
                 setImageSrc(result);
-                onImageSave(result); // Save the image automatically
-                toast({ title: "✅ อัพโหลดและบันทึกรูปภาพเรียบร้อย!", description: "รูปภาพถูกบันทึกสำหรับวันนี้" });
+                toast({ title: "🖼️ รูปภาพพร้อมสำหรับแก้ไข", description: "กด 'บันทึกรูปภาพ' เพื่อเก็บในคลัง" });
             };
             reader.readAsDataURL(file);
         }
     };
-
-    const handleDownload = () => {
+    
+    const handleSaveImage = () => {
         if (!imageSrc) {
-            toast({ title: "⚠️ กรุณาอัพโหลดหรือเลือกรูปภาพก่อน", variant: "destructive" });
+            toast({ title: "⚠️ ไม่มีรูปภาพให้บันทึก", variant: "destructive" });
             return;
         }
+        onImageSave(imageSrc);
+        toast({ title: "✅ บันทึกรูปภาพเรียบร้อยแล้ว!", description: "รูปภาพถูกบันทึกสำหรับวันนี้" });
+    }
 
+    const downloadImage = (src: string, textToAdd: string) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const image = new Image();
-        image.crossOrigin = 'anonymous'; // Handle potential CORS issues if images are not from the same origin
-        image.src = imageSrc;
+        image.crossOrigin = 'anonymous';
+        image.src = src;
         image.onload = () => {
             canvas.width = image.width;
             canvas.height = image.height;
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
-
-            // Draw image
+            
             ctx.drawImage(image, 0, 0);
 
-            // Draw text
-            if (text) {
+            if (textToAdd) {
                 const fontSize = image.width / 20;
                 ctx.font = `bold ${fontSize}px Kanit`;
                 ctx.fillStyle = 'white';
@@ -74,11 +85,10 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
                 const y = canvas.height - (fontSize * 1.5);
                 ctx.textAlign = 'center';
                 
-                ctx.strokeText(text, x, y);
-                ctx.fillText(text, x, y);
+                ctx.strokeText(textToAdd, x, y);
+                ctx.fillText(textToAdd, x, y);
             }
 
-            // Trigger download
             const link = document.createElement('a');
             link.download = 'edited-image.png';
             link.href = canvas.toDataURL('image/png');
@@ -86,12 +96,25 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
             toast({ title: "✅ ดาวน์โหลดรูปภาพเรียบร้อยแล้ว!" });
         };
         image.onerror = () => {
-            toast({ title: "❌ ไม่สามารถโหลดรูปภาพเพื่อแก้ไข", variant: "destructive" });
+            toast({ title: "❌ ไม่สามารถโหลดรูปภาพเพื่อดาวน์โหลด", variant: "destructive" });
         }
+    }
+
+    const handleDownload = () => {
+        if (!imageSrc) {
+            toast({ title: "⚠️ กรุณาอัพโหลดหรือเลือกรูปภาพก่อน", variant: "destructive" });
+            return;
+        }
+        downloadImage(imageSrc, text);
     };
 
     const triggerFileUpload = () => {
         fileInputRef.current?.click();
+    };
+
+    const openImageViewer = (src: string) => {
+        setSelectedImageForViewer(src);
+        setViewerOpen(true);
     };
 
     return (
@@ -99,10 +122,16 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
             <h3 className="cyber-title text-2xl mb-6">IMAGE EDITOR</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                    <Button onClick={triggerFileUpload} className="w-full cyber-btn flex justify-center items-center gap-2">
-                        <Upload className="h-5 w-5" />
-                        <span>อัพโหลดและบันทึกรูปภาพ</span>
-                    </Button>
+                     <div className="flex gap-2">
+                        <Button onClick={triggerFileUpload} className="w-full cyber-btn flex justify-center items-center gap-2">
+                            <Upload className="h-5 w-5" />
+                            <span>เลือกรูป</span>
+                        </Button>
+                        <Button onClick={handleSaveImage} className="w-full cyber-btn flex justify-center items-center gap-2">
+                            <Save className="h-5 w-5" />
+                            <span>บันทึกรูปภาพ</span>
+                        </Button>
+                     </div>
                     <Input
                         id="image-upload"
                         type="file"
@@ -126,7 +155,7 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
                     </div>
                      <Button onClick={handleDownload} className="w-full cyber-btn flex justify-center items-center gap-2">
                         <Download className="h-5 w-5" />
-                        <span>ดาวน์โหลดรูปภาพ</span>
+                        <span>ดาวน์โหลดรูปที่แก้ไข</span>
                     </Button>
                 </div>
                 <div className="flex items-center justify-center p-4 bg-black/40 rounded-xl border border-pink-500/50 min-h-[250px] relative">
@@ -147,7 +176,7 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
                     <h4 className="cyber-title text-xl mb-4">คลังรูปภาพสำหรับวันนี้</h4>
                     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                         {savedImages.map((img, index) => (
-                            <button key={index} onClick={() => setImageSrc(img.src)} className="relative aspect-square rounded-lg overflow-hidden border-2 border-transparent focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all">
+                            <button key={index} onClick={() => openImageViewer(img.src)} className="relative aspect-square rounded-lg overflow-hidden border-2 border-transparent focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all">
                                 <img src={img.src} alt={`Saved image ${index + 1}`} className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
                                     <p className="text-white text-xs text-center">
@@ -161,6 +190,28 @@ const ImageEditor = ({ savedImages, onImageSave }: ImageEditorProps) => {
             )}
             
             <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+            <Dialog open={isViewerOpen} onOpenChange={setViewerOpen}>
+                <DialogContent className="max-w-4xl w-full h-[90vh] bg-black/80 backdrop-blur-md border-cyan-500/50 flex flex-col p-4">
+                     <DialogHeader className="flex-shrink-0">
+                        <DialogTitle className="cyber-title">Image Viewer</DialogTitle>
+                        <DialogClose asChild>
+                             <button className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                                <X className="h-6 w-6" />
+                                <span className="sr-only">Close</span>
+                             </button>
+                        </DialogClose>
+                     </DialogHeader>
+                     <div className="flex-grow flex items-center justify-center overflow-hidden p-4">
+                        {selectedImageForViewer && <img src={selectedImageForViewer} alt="Full view" className="max-w-full max-h-full object-contain"/>}
+                     </div>
+                     <div className="flex-shrink-0 flex justify-center gap-4 p-4">
+                        <Button onClick={() => selectedImageForViewer && downloadImage(selectedImageForViewer, '')} className="cyber-btn">
+                            <Download className="mr-2 h-4 w-4" /> ดาวน์โหลด
+                        </Button>
+                     </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
