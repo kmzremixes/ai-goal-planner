@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import type { DailyData, AllRecords } from '@/lib/types';
+import type { DailyData, AllRecords, StoredImage } from '@/lib/types';
 
 import LoadingScreen from '@/components/loading-screen';
 import MatrixBackground from '@/components/matrix-background';
@@ -16,7 +16,7 @@ import AIPromptGeneratorModal from '@/components/ai-prompt-generator-modal';
 import { useToast } from "@/hooks/use-toast";
 import { Input } from '@/components/ui/input';
 
-const defaultData: DailyData = { notebook: '' };
+const defaultData: DailyData = { notebook: '', images: [] };
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -30,26 +30,54 @@ export default function Home() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate auth and data loading
     const timer = setTimeout(() => {
       setUserId(`user_${Math.random().toString(36).substring(2, 10)}`);
-      // You can load initial data from localStorage here if desired
+      try {
+        const savedRecords = localStorage.getItem('allRecords');
+        if (savedRecords) {
+          setAllRecords(JSON.parse(savedRecords));
+        }
+      } catch (error) {
+          console.error("Failed to load records from localStorage", error);
+      }
       setLoading(false);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+  
+  useEffect(() => {
+    if(!loading) {
+      try {
+        localStorage.setItem('allRecords', JSON.stringify(allRecords));
+      } catch (error) {
+        console.error("Failed to save records to localStorage", error);
+        toast({
+          title: "⚠️ ไม่สามารถบันทึกข้อมูล",
+          description: "พื้นที่จัดเก็บข้อมูลอาจเต็ม",
+          variant: "destructive",
+        })
+      }
+    }
+  }, [allRecords, loading, toast]);
+
 
   const handleDataSave = (date: string, data: DailyData) => {
-    setAllRecords(prev => {
-      const updatedRecords = { ...prev, [date]: data };
-      // You can save to localStorage here
-      // localStorage.setItem('allRecords', JSON.stringify(updatedRecords));
-      return updatedRecords;
-    });
+    setAllRecords(prev => ({ ...prev, [date]: data }));
     toast({
       title: "✅ บันทึกข้อมูลเรียบร้อยแล้ว!",
       variant: 'default',
     });
+  };
+  
+  const handleImageSave = (newImageSrc: string) => {
+    const newImage: StoredImage = {
+        src: newImageSrc,
+        timestamp: new Date().toISOString(),
+    };
+    const currentData = allRecords[selectedDate] || defaultData;
+    const updatedImages = [...currentData.images, newImage];
+    const updatedData = { ...currentData, images: updatedImages };
+    setAllRecords(prev => ({ ...prev, [selectedDate]: updatedData }));
   };
 
   const currentData = allRecords[selectedDate] || defaultData;
@@ -96,7 +124,10 @@ export default function Home() {
         
         <ContentCreator />
 
-        <ImageEditor />
+        <ImageEditor 
+            savedImages={currentData.images}
+            onImageSave={handleImageSave}
+        />
         
         <AppFooter />
       </main>
